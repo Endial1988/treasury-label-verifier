@@ -11,6 +11,8 @@ from label_verifier.verifiers.net_contents import verify_net_contents
     ("750 mL", "700 mL", Verdict.MISMATCH),
     ("750 mL", "25.4 fl oz", Verdict.MATCH),
     ("750 mL (25.4 fl oz)", "750 mL (24 fl oz)", Verdict.MISMATCH),
+    ("700 mL", "70cl", Verdict.MATCH),
+    ("700 mL", "75cl", Verdict.MISMATCH),
 ])
 def test_net_contents_pairs(expected, found, want):
     assert verify_net_contents(expected, found).verdict == want

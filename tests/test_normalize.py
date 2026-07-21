@@ -47,3 +47,10 @@ def test_volume_to_ml_metric():
 def test_volume_to_ml_us_customary():
     # 750 mL / 29.5735 ml-per-floz = 25.36 fl oz (not 25.4 — that's ~1.17 mL off).
     assert abs(volume_to_ml("25.36 fl oz") - 750.0) < 1.0
+
+
+def test_volume_to_ml_centiliters():
+    # Common on European labels, e.g. "70cl e" (70 centiliters, estimated volume mark).
+    assert volume_to_ml("70cl") == 700.0
+    assert volume_to_ml("70 cl e") == 700.0
+    assert volume_to_ml("75cl") == 750.0

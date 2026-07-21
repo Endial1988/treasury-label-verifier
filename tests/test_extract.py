@@ -33,6 +33,13 @@ def test_net_contents_regex_finds_ml():
     assert f["net_contents"].text == "750 mL"
 
 
+def test_net_contents_regex_finds_centiliters():
+    text = "BRAND\nCLASS\n40% vol\n70cl e\nBottler, TX\n"
+    f = fields_from_text(text)
+    assert f["net_contents"].text is not None
+    assert "70" in f["net_contents"].text and "cl" in f["net_contents"].text.lower()
+
+
 def test_bottler_line_found_by_state_token():
     f = fields_from_text(_LABEL_TEXT)
     assert "Lawrenceburg" in f["bottler"].text

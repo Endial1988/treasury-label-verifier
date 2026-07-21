@@ -17,6 +17,8 @@ def _all_volumes_ml(s: str) -> list[float]:
         unit = (m.group(2) or "").lower()
         if "oz" in unit or "fl" in unit:
             out.append(value * 29.5735)
+        elif unit == "cl":
+            out.append(value * 10.0)
         elif unit.startswith("l") and not unit.startswith("ml"):
             out.append(value * 1000.0)
         else:

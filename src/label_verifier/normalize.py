@@ -80,12 +80,14 @@ def abv_to_percent(s: str) -> float | None:
 
 
 def volume_to_ml(s: str) -> float | None:
-    """Extract net contents in mL. Accept ml, L, fl oz."""
+    """Extract net contents in mL. Accept ml, cl, L, fl oz."""
     val_unit = extract_number(s)
     if val_unit is None:
         return None
     value, unit = val_unit
     low = (s or "").lower()
+    if unit == "cl" or ("cl" in low and "ml" not in low):
+        return value * 10.0
     if "l" == unit or unit.startswith("l") or "liter" in low:
         if "m" in low:
             return value

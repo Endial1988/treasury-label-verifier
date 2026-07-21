@@ -37,7 +37,7 @@ _ALCOHOL_RE = re.compile(
     r"|\d+(?:\.\d+)?\s*proof",                                   # "90 Proof" alone
     re.I,
 )
-_NET_RE = re.compile(r"\d+(?:\.\d+)?\s*(?:m\s?l|l\b|fl\.?\s*oz)", re.I)
+_NET_RE = re.compile(r"\d+(?:\.\d+)?\s*(?:m\s?l|cl\b|l\b|fl\.?\s*oz)", re.I)
 _WARNING_START_RE = re.compile(r"government\s+warning\s*:?", re.I)
 _COUNTRY_RE = re.compile(r"product\s+of\s+[a-z ]+", re.I)
 _STATE_ABBRS = set(_STATES.values())
