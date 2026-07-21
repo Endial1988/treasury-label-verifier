@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Verification Result — TTB Alcohol Label Verification (Prototype)</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>Verification Result</h1>
+    {% if demo_label %}<p>Demonstration case: {{ demo_label }}</p>{% endif %}
+  </header>
+
+  {% set icon = {"pass": "PASS ✓", "fail": "FAIL ✗", "needs_review": "NEEDS REVIEW ⚠"} %}
+
+  <div class="overall-banner {{ report.overall }}" role="status">
+    Overall: {{ icon[report.overall] }}
+    <p>{{ report.overall_explanation }}</p>
+  </div>
+
+  {% if ocr_error %}
+    <div class="error-banner" role="alert">
+      Extraction issue: {{ ocr_error }}. Fields could not be read from the image; affected
+      checks are reported as Needs Review rather than guessed.
+    </div>
+  {% endif %}
+
+  <table class="results">
+    <thead>
+      <tr>
+        <th scope="col">Field</th>
+        <th scope="col">Expected (application)</th>
+        <th scope="col">Extracted (label)</th>
+        <th scope="col">Status</th>
+        <th scope="col">Explanation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for f in report.fields %}
+        <tr>
+          <td>{{ field_labels.get(f.field, f.field) }}</td>
+          <td>{{ f.expected if f.expected else "(not provided)" }}</td>
+          <td>{{ f.found if f.found else "(not read)" }}</td>
+          <td><span class="status-chip {{ f.status }}">{{ icon[f.status] }}</span></td>
+          <td>
+            <div class="explanation">{{ f.explanation }}</div>
+            {% if f.note %}<div class="note">{{ f.note }}</div>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p class="meta">Processed in {{ elapsed_ms }} ms.</p>
+
+  <p><a class="btn secondary" href="/">&larr; Verify another label</a></p>
+
+  <footer>
+    Standalone prototype — not a final compliance determination. Uploaded images are
+    processed in memory and are not stored.
+  </footer>
+</body>
+</html>

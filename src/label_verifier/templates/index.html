@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TTB Alcohol Label Verification (Prototype)</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header class="app-header">
+    <h1>TTB Alcohol Label Verification</h1>
+    <p>Compare an alcohol label image against the application on file.</p>
+  </header>
+
+  <div class="disclaimer">
+    <strong>Prototype disclaimer:</strong> this is a take-home proof of concept, not a
+    COLA integration or a final regulatory determination. Every result is decision
+    support for a human reviewer.
+  </div>
+
+  {% if error %}
+    <div class="error-banner" role="alert">{{ error }}</div>
+  {% endif %}
+
+  <fieldset>
+    <legend>Try a bundled demonstration case (no upload needed)</legend>
+    <div class="demo-grid">
+      {% for id, case in demo_cases.items() %}
+        <form method="post" action="/demo/{{ id }}">
+          <button type="submit" class="secondary" style="width:100%; text-align:left;">
+            {{ case.label }}<br><span style="font-weight:400; font-size:0.85rem;">{{ case.description }}</span>
+          </button>
+        </form>
+      {% endfor %}
+    </div>
+  </fieldset>
+
+  <form method="post" action="/verify" enctype="multipart/form-data">
+    <fieldset>
+      <legend>Application data (expected values)</legend>
+      {% for field, display in field_labels.items() %}
+        <div class="field-row">
+          <label for="{{ field }}">{{ display }}</label>
+          <input type="text" id="{{ field }}" name="{{ field }}" autocomplete="off">
+        </div>
+      {% endfor %}
+      <div class="checkbox-row">
+        <input type="checkbox" id="is_import" name="is_import" value="true">
+        <label for="is_import" style="margin:0;">This is an imported product (country of origin required)</label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Label image</legend>
+      <div class="field-row">
+        <label for="label_image">Upload label image (PNG or JPEG, max 8&nbsp;MB)</label>
+        <input type="file" id="label_image" name="label_image" accept="image/png,image/jpeg" required>
+      </div>
+    </fieldset>
+
+    <button type="submit">Verify label</button>
+  </form>
+
+  <footer>
+    Standalone prototype — not a final compliance determination. See README.md for
+    scope, assumptions, and limitations.
+  </footer>
+</body>
+</html>

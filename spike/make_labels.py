@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 OUT = Path(__file__).parent / "labels"
 OUT.mkdir(exist_ok=True)
 W, H = 600, 900
+MARGIN = 40
 
 
 def _font(size: int):
@@ -22,13 +23,36 @@ def _font(size: int):
         return ImageFont.load_default()
 
 
+def _wrap_to_width(d: ImageDraw.ImageDraw, text: str, font, max_width: int) -> list[str]:
+    """Word-wrap to fit max_width — a plain d.text() call never wraps, it
+    silently clips at the canvas edge (this bit the demo assets: OCR only
+    ever saw the un-clipped prefix of the warning paragraph)."""
+    words = text.split()
+    lines, current = [], ""
+    for word in words:
+        candidate = f"{current} {word}".strip()
+        if d.textlength(candidate, font=font) <= max_width:
+            current = candidate
+        else:
+            if current:
+                lines.append(current)
+            current = word
+    if current:
+        lines.append(current)
+    return lines
+
+
 def _base_image(lines: list[tuple[str, int]], bg="white", fg="black") -> Image.Image:
     img = Image.new("RGB", (W, H), bg)
     d = ImageDraw.Draw(img)
-    y = 40
+    y = MARGIN
+    max_width = W - 2 * MARGIN
     for text, size in lines:
-        d.text((40, y), text, font=_font(size), fill=fg)
-        y += size + 24
+        font = _font(size)
+        for wrapped_line in _wrap_to_width(d, text, font, max_width):
+            d.text((MARGIN, y), wrapped_line, font=font, fill=fg)
+            y += size + 6
+        y += 18
     return img
 
 
